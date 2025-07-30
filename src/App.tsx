@@ -18,26 +18,26 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <SidebarProvider>
-          <div className="min-h-screen flex w-full bg-background">
-            <AppSidebar />
-            <div className="flex-1 flex flex-col">
-              <header className="h-14 flex items-center justify-between border-b bg-background px-6">
-                <SidebarTrigger />
-                <ThemeToggle />
-              </header>
-              <main className="flex-1 p-6">
-                <BrowserRouter>
+        <BrowserRouter>
+          <SidebarProvider>
+            <div className="min-h-screen flex w-full bg-background">
+              <AppSidebar />
+              <div className="flex-1 flex flex-col">
+                <header className="h-14 flex items-center justify-between border-b bg-background px-6">
+                  <SidebarTrigger />
+                  <ThemeToggle />
+                </header>
+                <main className="flex-1 p-6">
                   <Routes>
                     <Route path="/" element={<Index />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
-                </BrowserRouter>
-              </main>
+                </main>
+              </div>
             </div>
-          </div>
-        </SidebarProvider>
+          </SidebarProvider>
+        </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>

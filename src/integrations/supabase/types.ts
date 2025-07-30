@@ -14,7 +14,128 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      daily_metrics: {
+        Row: {
+          active_users: number | null
+          churn_rate: number | null
+          created_at: string | null
+          date: string
+          id: string
+          new_signups: number | null
+          retention_rate: number | null
+          total_signups: number | null
+        }
+        Insert: {
+          active_users?: number | null
+          churn_rate?: number | null
+          created_at?: string | null
+          date: string
+          id?: string
+          new_signups?: number | null
+          retention_rate?: number | null
+          total_signups?: number | null
+        }
+        Update: {
+          active_users?: number | null
+          churn_rate?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          new_signups?: number | null
+          retention_rate?: number | null
+          total_signups?: number | null
+        }
+        Relationships: []
+      }
+      feature_usage: {
+        Row: {
+          created_at: string | null
+          feature_name: string
+          id: string
+          last_used: string | null
+          usage_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          feature_name: string
+          id?: string
+          last_used?: string | null
+          usage_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          feature_name?: string
+          id?: string
+          last_used?: string | null
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
+      user_behaviors: {
+        Row: {
+          feature_clicked: string | null
+          id: string
+          page_visited: string | null
+          session_time: number | null
+          timestamp: string | null
+          user_id: string | null
+        }
+        Insert: {
+          feature_clicked?: string | null
+          id?: string
+          page_visited?: string | null
+          session_time?: number | null
+          timestamp?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          feature_clicked?: string | null
+          id?: string
+          page_visited?: string | null
+          session_time?: number | null
+          timestamp?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_behaviors_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          plan_type: string | null
+          region: string | null
+          signup_source: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          plan_type?: string | null
+          region?: string | null
+          signup_source?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          plan_type?: string | null
+          region?: string | null
+          signup_source?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { FilterPanel } from "@/components/marketing/FilterPanel";
 import { MetricsCard } from "@/components/MetricsCard";
@@ -20,18 +20,12 @@ export default function Index() {
   const [campaign, setCampaign] = useState("all");
   const [platform, setPlatform] = useState("all");
   
-  const { data, loading, error } = useMarketingData();
+  const { data, loading, error, refetch } = useMarketingData();
+  const [refreshing, setRefreshing] = useState(false);
+  const isFirstLoad = useRef(true);
 
-  const handleResetFilters = () => {
-    setDateRange({
-      from: addDays(new Date(), -30),
-      to: new Date(),
-    });
-    setCampaign("all");
-    setPlatform("all");
-  };
-
-  if (loading) {
+  // Only show loading on first load
+  if (loading && isFirstLoad.current) {
     return (
       <div className="space-y-6">
         <motion.div
@@ -45,6 +39,22 @@ export default function Index() {
       </div>
     );
   }
+
+  // Track first load
+  if (!loading && isFirstLoad.current) {
+    isFirstLoad.current = false;
+  }
+
+  const handleResetFilters = () => {
+    setDateRange({
+      from: addDays(new Date(), -30),
+      to: new Date(),
+    });
+    setCampaign("all");
+    setPlatform("all");
+  };
+
+
 
   if (error) {
     return (
@@ -78,105 +88,38 @@ export default function Index() {
         <p className="text-muted-foreground">Real-time marketing analytics and AI-powered insights</p>
       </motion.div>
 
-      <FilterPanel 
-        dateRange={dateRange}
-        onDateRangeChange={setDateRange}
-        campaign={campaign}
-        onCampaignChange={setCampaign}
-        platform={platform}
-        onPlatformChange={setPlatform}
-        onReset={handleResetFilters}
-      />
-
-      {/* Live Campaign KPIs */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
-      >
-        <MetricsCard
-          title="Total Spend"
-          value={`$${data?.kpis.totalSpend.toLocaleString() || "0"}`}
-          change="+12% from last month"
-          changeType="negative"
-          icon={DollarSign}
+      // ...existing code...
+      {/* Subtle refreshing indicator */}
+      {loading && !isFirstLoad.current && (
+        <div className="text-center text-xs text-muted-foreground animate-pulse">Refreshing data...</div>
+      )}
+      <div className="flex flex-col md:flex-row gap-6">
+        <FilterPanel
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+          campaign={campaign}
+          setCampaign={setCampaign}
+          platform={platform}
+          setPlatform={setPlatform}
+          onReset={handleResetFilters}
         />
-        <MetricsCard
-          title="Total Revenue"
-          value={`$${data?.kpis.totalRevenue.toLocaleString() || "0"}`}
-          change="+18% from last month"
-          changeType="positive"
-          icon={TrendingUp}
-        />
-        <MetricsCard
-          title="Average CTR"
-          value={`${data?.kpis.avgCTR.toFixed(2) || 0}%`}
-          change="+0.3% from last month"
-          changeType="positive"
-          icon={MousePointer}
-        />
-        <MetricsCard
-          title="ROAS"
-          value={`${data?.kpis.roas.toFixed(1) || 0}x`}
-          change="+0.2x from last month"
-          changeType="positive"
-          icon={Target}
-        />
-      </motion.div>
-
-      {/* Main Dashboard Grid */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* AI Insights Section */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
-          className="lg:col-span-1 space-y-4"
-        >
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <Zap className="h-5 w-5 text-primary" />
-            AI Insights
-          </h2>
-          {data?.insights.slice(0, 3).map((insight, index) => (
-            <InsightCard key={insight.id} insight={insight} index={index} />
-          ))}
-        </motion.div>
-
-        {/* Charts Section */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 space-y-6"
-        >
-          <TrendChart 
-            data={trendData} 
-            title="Campaign Performance Trends"
-          />
-          <RevenueBreakdown revenue={data?.revenue || []} />
-        </motion.div>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="lg:col-span-2"
-        >
-          <CampaignTable campaigns={data?.campaigns || []} />
-        </motion.div>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          <UserTimeline />
-        </motion.div>
+        <div className="flex-1 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <MetricsCard kpis={data?.kpis} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <TrendChart data={data?.campaigns} />
+            <RevenueBreakdown data={data?.revenue} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <InsightCard insights={data?.insights} />
+            <UserTimeline campaigns={data?.campaigns} />
+          </div>
+          <CampaignTable campaigns={data?.campaigns} />
+        </div>
       </div>
     </div>
   );
+
+      // ...existing code...
 }

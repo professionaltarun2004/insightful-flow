@@ -1,4 +1,4 @@
-import { BarChart3, Bell, Home, Lightbulb, Settings, TrendingUp } from "lucide-react";
+import { Target, Zap, Home, TrendingUp, Settings, Bell } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -14,9 +14,9 @@ import {
 
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: Home },
-  { title: "Metrics", url: "/metrics", icon: BarChart3 },
-  { title: "Insights", url: "/insights", icon: Lightbulb },
-  { title: "Alerts", url: "/alerts", icon: Bell },
+  { title: "Campaigns", url: "/metrics", icon: Target },
+  { title: "AI Insights", url: "/insights", icon: Zap },
+  { title: "Performance", url: "/alerts", icon: TrendingUp },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
@@ -32,15 +32,15 @@ export function AppSidebar() {
             <TrendingUp className="h-8 w-8 text-primary" />
             {!isCollapsed && (
               <div>
-                <h1 className="text-xl font-bold text-foreground">Analytics</h1>
-                <p className="text-sm text-muted-foreground">Dashboard</p>
+                <h1 className="text-xl font-bold text-foreground">AddMyBrand</h1>
+                <p className="text-sm text-muted-foreground">Marketing Dashboard</p>
               </div>
             )}
           </div>
         </div>
         
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>AddMyBrand</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (

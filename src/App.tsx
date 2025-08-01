@@ -8,9 +8,9 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Index from "./pages/Index";
-import Metrics from "./pages/Metrics";
+import Campaigns from "./pages/Metrics";
 import Insights from "./pages/Insights";
-import Alerts from "./pages/Alerts";
+import Performance from "./pages/Alerts";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -34,9 +34,9 @@ const App = () => (
                 <main className="flex-1 p-6">
                   <Routes>
                     <Route path="/" element={<Index />} />
-                    <Route path="/metrics" element={<Metrics />} />
+                    <Route path="/metrics" element={<Campaigns />} />
                     <Route path="/insights" element={<Insights />} />
-                    <Route path="/alerts" element={<Alerts />} />
+                    <Route path="/alerts" element={<Performance />} />
                     <Route path="/settings" element={<Settings />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />

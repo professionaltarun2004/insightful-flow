@@ -14,91 +14,172 @@ export type Database = {
   }
   public: {
     Tables: {
-      daily_metrics: {
+      campaigns: {
         Row: {
-          active_users: number | null
-          churn_rate: number | null
-          created_at: string | null
-          date: string
+          budget: number
+          clicks: number
+          conversions: number
+          cpc: number
+          created_at: string
+          ctr: number
+          end_date: string | null
           id: string
-          new_signups: number | null
-          retention_rate: number | null
-          total_signups: number | null
-        }
-        Insert: {
-          active_users?: number | null
-          churn_rate?: number | null
-          created_at?: string | null
-          date: string
-          id?: string
-          new_signups?: number | null
-          retention_rate?: number | null
-          total_signups?: number | null
-        }
-        Update: {
-          active_users?: number | null
-          churn_rate?: number | null
-          created_at?: string | null
-          date?: string
-          id?: string
-          new_signups?: number | null
-          retention_rate?: number | null
-          total_signups?: number | null
-        }
-        Relationships: []
-      }
-      feature_usage: {
-        Row: {
-          created_at: string | null
-          feature_name: string
-          id: string
-          last_used: string | null
-          usage_count: number | null
-        }
-        Insert: {
-          created_at?: string | null
-          feature_name: string
-          id?: string
-          last_used?: string | null
-          usage_count?: number | null
-        }
-        Update: {
-          created_at?: string | null
-          feature_name?: string
-          id?: string
-          last_used?: string | null
-          usage_count?: number | null
-        }
-        Relationships: []
-      }
-      user_behaviors: {
-        Row: {
-          feature_clicked: string | null
-          id: string
-          page_visited: string | null
-          session_time: number | null
-          timestamp: string | null
+          impressions: number
+          name: string
+          platform: string
+          spent: number
+          start_date: string
+          status: string
+          updated_at: string
           user_id: string | null
         }
         Insert: {
-          feature_clicked?: string | null
+          budget?: number
+          clicks?: number
+          conversions?: number
+          cpc?: number
+          created_at?: string
+          ctr?: number
+          end_date?: string | null
           id?: string
-          page_visited?: string | null
-          session_time?: number | null
-          timestamp?: string | null
+          impressions?: number
+          name: string
+          platform: string
+          spent?: number
+          start_date: string
+          status?: string
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
-          feature_clicked?: string | null
+          budget?: number
+          clicks?: number
+          conversions?: number
+          cpc?: number
+          created_at?: string
+          ctr?: number
+          end_date?: string | null
           id?: string
-          page_visited?: string | null
-          session_time?: number | null
-          timestamp?: string | null
+          impressions?: number
+          name?: string
+          platform?: string
+          spent?: number
+          start_date?: string
+          status?: string
+          updated_at?: string
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "user_behaviors_user_id_fkey"
+            foreignKeyName: "campaigns_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insights: {
+        Row: {
+          campaign_id: string | null
+          confidence_score: number | null
+          content: string
+          created_at: string
+          id: string
+          insight_type: string
+          is_ai_generated: boolean | null
+          priority: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          confidence_score?: number | null
+          content: string
+          created_at?: string
+          id?: string
+          insight_type: string
+          is_ai_generated?: boolean | null
+          priority?: string
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          confidence_score?: number | null
+          content?: string
+          created_at?: string
+          id?: string
+          insight_type?: string
+          is_ai_generated?: boolean | null
+          priority?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insights_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "insights_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      revenue: {
+        Row: {
+          amount: number
+          campaign_id: string | null
+          channel: string
+          created_at: string
+          currency: string
+          geography: string
+          id: string
+          transaction_date: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          campaign_id?: string | null
+          channel: string
+          created_at?: string
+          currency?: string
+          geography?: string
+          id?: string
+          transaction_date?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          campaign_id?: string | null
+          channel?: string
+          created_at?: string
+          currency?: string
+          geography?: string
+          id?: string
+          transaction_date?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revenue_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "revenue_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -108,30 +189,33 @@ export type Database = {
       }
       users: {
         Row: {
+          company_name: string | null
           created_at: string | null
           email: string | null
           id: string
-          plan_type: string | null
+          industry: string | null
           region: string | null
-          signup_source: string | null
+          subscription_plan: string | null
           updated_at: string | null
         }
         Insert: {
+          company_name?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
-          plan_type?: string | null
+          industry?: string | null
           region?: string | null
-          signup_source?: string | null
+          subscription_plan?: string | null
           updated_at?: string | null
         }
         Update: {
+          company_name?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
-          plan_type?: string | null
+          industry?: string | null
           region?: string | null
-          signup_source?: string | null
+          subscription_plan?: string | null
           updated_at?: string | null
         }
         Relationships: []

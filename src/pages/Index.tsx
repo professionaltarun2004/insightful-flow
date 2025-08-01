@@ -1,101 +1,182 @@
 import { useState } from "react";
-import { Users, TrendingUp, UserCheck, AlertTriangle } from "lucide-react";
+import { motion } from "framer-motion";
+import { FilterPanel } from "@/components/marketing/FilterPanel";
 import { MetricsCard } from "@/components/MetricsCard";
-import { UsageChart } from "@/components/charts/UsageChart";
+import { CampaignTable } from "@/components/marketing/CampaignTable";
+import { InsightCard } from "@/components/marketing/InsightCard";
+import { RevenueBreakdown } from "@/components/marketing/RevenueBreakdown";
+import { UserTimeline } from "@/components/marketing/UserTimeline";
 import { TrendChart } from "@/components/charts/TrendChart";
-import { FilterPanel } from "@/components/FilterPanel";
-import { InsightsPanel } from "@/components/InsightsPanel";
-import { useAnalytics } from "@/hooks/useAnalytics";
+import { useMarketingData } from "@/hooks/useMarketingData";
+import { DollarSign, Target, TrendingUp, Users, MousePointer, Eye, Zap } from "lucide-react";
+import { DateRange } from "react-day-picker";
+import { addDays } from "date-fns";
 
-const Index = () => {
-  const [dateRange, setDateRange] = useState("30d");
-  const [region, setRegion] = useState("all");
-  const [plan, setPlan] = useState("all");
+export default function Index() {
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: addDays(new Date(), -30),
+    to: new Date(),
+  });
+  const [campaign, setCampaign] = useState("all");
+  const [platform, setPlatform] = useState("all");
   
-  const { data: analytics, loading, error } = useAnalytics(dateRange);
+  const { data, loading, error } = useMarketingData();
+
+  const handleResetFilters = () => {
+    setDateRange({
+      from: addDays(new Date(), -30),
+      to: new Date(),
+    });
+    setCampaign("all");
+    setPlatform("all");
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading analytics...</p>
-        </div>
+      <div className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h1 className="text-3xl font-bold text-foreground">AddMyBrand Dashboard</h1>
+          <p className="text-muted-foreground">Real-time marketing analytics and AI-powered insights</p>
+        </motion.div>
+        <div className="text-center">Loading marketing data...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <AlertTriangle className="h-8 w-8 text-destructive mx-auto mb-4" />
-          <p className="text-destructive">Error loading analytics: {error}</p>
-        </div>
+      <div className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h1 className="text-3xl font-bold text-foreground">AddMyBrand Dashboard</h1>
+          <p className="text-muted-foreground">Real-time marketing analytics and AI-powered insights</p>
+        </motion.div>
+        <div className="text-center text-destructive">Error loading analytics: {error}</div>
       </div>
     );
   }
 
+  // Create trend data for chart
+  const trendData = data?.campaigns.slice(0, 7).map((campaign, index) => ({
+    date: campaign.start_date,
+    signups: Math.floor(campaign.conversions * (1 + Math.random() * 0.5)),
+    usage: campaign.clicks,
+  })) || [];
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
-        <p className="text-muted-foreground">
-          Monitor your SaaS metrics and user behavior in real-time
-        </p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h1 className="text-3xl font-bold text-foreground">AddMyBrand Dashboard</h1>
+        <p className="text-muted-foreground">Real-time marketing analytics and AI-powered insights</p>
+      </motion.div>
 
-      <FilterPanel
+      <FilterPanel 
         dateRange={dateRange}
         onDateRangeChange={setDateRange}
-        region={region}
-        onRegionChange={setRegion}
-        plan={plan}
-        onPlanChange={setPlan}
+        campaign={campaign}
+        onCampaignChange={setCampaign}
+        platform={platform}
+        onPlatformChange={setPlatform}
+        onReset={handleResetFilters}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Live Campaign KPIs */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
+      >
         <MetricsCard
-          title="Daily Active Users"
-          value={analytics?.dailyActiveUsers.toLocaleString() || "0"}
-          change="+12.5% from yesterday"
-          changeType="positive"
-          icon={Users}
+          title="Total Spend"
+          value={`$${data?.kpis.totalSpend.toLocaleString() || "0"}`}
+          change="+12% from last month"
+          changeType="negative"
+          icon={DollarSign}
         />
         <MetricsCard
-          title="Monthly Active Users"
-          value={analytics?.monthlyActiveUsers.toLocaleString() || "0"}
-          change="+8.2% from last month"
+          title="Total Revenue"
+          value={`$${data?.kpis.totalRevenue.toLocaleString() || "0"}`}
+          change="+18% from last month"
           changeType="positive"
           icon={TrendingUp}
         />
         <MetricsCard
-          title="Retention Rate"
-          value={`${analytics?.retentionRate || 0}%`}
-          change="-2.1% from last week"
-          changeType="negative"
-          icon={UserCheck}
+          title="Average CTR"
+          value={`${data?.kpis.avgCTR.toFixed(2) || 0}%`}
+          change="+0.3% from last month"
+          changeType="positive"
+          icon={MousePointer}
         />
         <MetricsCard
-          title="Churn Rate"
-          value={`${analytics?.churnRate || 0}%`}
-          change="+1.3% from last week"
-          changeType="negative"
-          icon={AlertTriangle}
+          title="ROAS"
+          value={`${data?.kpis.roas.toFixed(1) || 0}x`}
+          change="+0.2x from last month"
+          changeType="positive"
+          icon={Target}
         />
+      </motion.div>
+
+      {/* Main Dashboard Grid */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* AI Insights Section */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+          className="lg:col-span-1 space-y-4"
+        >
+          <h2 className="text-xl font-semibold flex items-center gap-2">
+            <Zap className="h-5 w-5 text-primary" />
+            AI Insights
+          </h2>
+          {data?.insights.slice(0, 3).map((insight, index) => (
+            <InsightCard key={insight.id} insight={insight} index={index} />
+          ))}
+        </motion.div>
+
+        {/* Charts Section */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+          className="lg:col-span-2 space-y-6"
+        >
+          <TrendChart 
+            data={trendData} 
+            title="Campaign Performance Trends"
+          />
+          <RevenueBreakdown revenue={data?.revenue || []} />
+        </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <UsageChart data={analytics?.featureUsage || []} />
-        <TrendChart 
-          data={analytics?.trends || []} 
-          title="Growth Trends" 
-        />
+      {/* Bottom Section */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="lg:col-span-2"
+        >
+          <CampaignTable campaigns={data?.campaigns || []} />
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <UserTimeline />
+        </motion.div>
       </div>
-
-      <InsightsPanel />
     </div>
   );
-};
-
-export default Index;
+}

@@ -26,16 +26,17 @@ serve(async (req) => {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `As an AI analytics expert, provide actionable insights for a SaaS dashboard based on this prompt: ${prompt}. 
+            text: `As an AI marketing analytics expert, provide actionable insights for the AddMyBrand marketing automation dashboard based on this prompt: ${prompt}. 
 
             Focus on:
-            1. Current performance trends
-            2. User behavior patterns
-            3. Churn risk indicators
-            4. Specific recommendations for improvement
-            5. Priority actions to take
+            1. Campaign performance optimization opportunities
+            2. Budget allocation recommendations
+            3. Platform-specific insights (Facebook, Instagram, Google, LinkedIn)
+            4. CTR and conversion rate improvement strategies
+            5. Revenue growth opportunities
+            6. Customer acquisition cost optimization
 
-            Keep the response concise but detailed, around 3-4 paragraphs.`
+            Provide specific, actionable recommendations that a marketing manager can implement immediately. Keep the response concise but detailed, around 3-4 paragraphs. Include specific metrics and percentage improvements where relevant.`
           }]
         }],
         generationConfig: {

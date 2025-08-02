@@ -48,10 +48,16 @@ All colors MUST be HSL.
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(234 89% 74%), hsl(234 89% 84%));
     --gradient-accent: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
+    --gradient-background: linear-gradient(135deg, hsl(234 89% 98%), hsl(142 76% 96%));
     
     /* Shadows */
     --shadow-elegant: 0 4px 20px -4px hsl(234 89% 74% / 0.15);
     --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.1);
+    --shadow-glow: 0 0 40px hsl(234 89% 74% / 0.1);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
 
@@ -106,9 +112,13 @@ All colors MUST be HSL.
     --chart-4: 350 89% 70%;
     --chart-5: 197 37% 34%;
     
+    /* Dark mode gradients */
+    --gradient-background: linear-gradient(135deg, hsl(222 84% 8%), hsl(217 32% 12%));
+    
     /* Dark mode shadows */
     --shadow-elegant: 0 4px 20px -4px hsl(234 89% 74% / 0.2);
     --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
+    --shadow-glow: 0 0 40px hsl(234 89% 74% / 0.15);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -127,5 +137,53 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    background: linear-gradient(135deg, hsl(var(--background)), hsl(var(--background)));
+  }
+  
+  /* Custom animations */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .animate-bounce-in {
+    animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elegant);
+  }
+  
+  .gradient-background {
+    background: var(--gradient-background);
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+    50% { transform: scale(1.02) translateY(-2px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  
+  /* Scroll animations */
+  .scroll-smooth {
+    scroll-behavior: smooth;
   }
 }

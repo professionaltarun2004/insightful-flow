@@ -183,8 +183,8 @@ export function useMarketingData() {
       )
       .subscribe();
 
-    // Simulate real-time updates every 3 seconds
-    const interval = setInterval(fetchMarketingData, 3000);
+    // Optimized real-time updates every 30 seconds to reduce load
+    const interval = setInterval(fetchMarketingData, 30000);
 
     return () => {
       clearInterval(interval);
